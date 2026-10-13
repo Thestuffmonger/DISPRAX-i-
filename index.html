@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full select-none">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DISPRAX-i - Démo</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for Retro/Modern Aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            retro: ['VT323', 'monospace'],
+            sans: ['Fredoka', 'sans-serif'],
+          },
+          colors: {
+            arcade: {
+              bg: '#120E24',
+              panel: '#1A153A',
+              border: '#3D3270',
+              yellow: '#FFDE59',
+              cyan: '#00F0FF',
+              pink: '#FF2A85',
+              green: '#00FF66',
+              purple: '#8C52FF',
+              dark: '#0B0817'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .retro-btn {
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      box-shadow: 0px 6px 0px 0px rgba(0,0,0,0.6);
+    }
+    .retro-btn:active, .retro-btn.pressed {
+      transform: translateY(4px);
+      box-shadow: 0px 2px 0px 0px rgba(0,0,0,0.6);
+    }
+    
+    .retro-window {
+      box-shadow: 8px 8px 0px 0px rgba(0,0,0,0.7), inset -2px -2px 0px 0px rgba(0,0,0,0.4), inset 2px 2px 0px 0px rgba(255,255,255,0.2);
+    }
+
+    .window-instance {
+      touch-action: none;
+    }
+
+    .window-header {
+      cursor: grab;
+    }
+    .window-header:active {
+      cursor: grabbing;
+    }
+
+    .bg-grid-pattern {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    ::-webkit-scrollbar {
+      width: 16px;
+      height: 16px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #120E24;
+      border: 2px solid #3D3270;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #FF2A85;
+      border: 2px solid #120E24;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full bg-arcade-bg bg-grid-pattern text-white font-sans overflow-hidden flex flex-col justify-between">
+
+  <header class="bg-arcade-panel border-b-4 border-arcade-border px-4 py-2 flex items-center justify-between z-50 shrink-0">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 bg-arcade-pink rounded-lg flex items-center justify-center font-bold text-black border-2 border-white shadow-md text-base">
+        i
+      </div>
+      <div class="flex flex-col">
+        <span class="font-retro text-2xl md:text-3xl tracking-wide text-arcade-yellow drop-shadow-md leading-none">
+          DISPRAX-i <span class="text-xs font-sans text-arcade-cyan bg-arcade-dark px-2 py-0.5 rounded-full border border-arcade-cyan">Démo</span>
+        </span>
+        <span class="text-[10px] text-gray-300 font-sans mt-0.5">Par MARTIN Nolane</span>
+      </div>
+    </div>
+
+    <!-- Sound Toggle & Clock -->
+    <div class="flex items-center space-x-3">
+      <button id="soundToggleBtn" onclick="toggleAudio()" class="retro-btn bg-arcade-purple border-2 border-white px-3 py-1 rounded-xl text-xs md:text-sm font-bold flex items-center space-x-2 text-white hover:bg-opacity-90">
+        <span id="soundIcon">🔊</span>
+        <span id="soundText" class="hidden sm:inline">SON: ON</span>
+      </button>
+      <div id="osClock" class="font-retro text-xl md:text-2xl text-arcade-green bg-arcade-dark px-3 py-1 rounded-xl border border-arcade-border">
+        12:00
+      </div>
+    </div>
+  </header>
+
+  <main class="relative flex-1 p-4 md:p-8 overflow-hidden flex flex-col md:flex-row flex-wrap content-start items-start gap-6 md:gap-8">
+    
+    <!-- DESKTOP ICON 1: Calcul XXL -->
+    <button onclick="openWindow('win-calcul')" class="retro-btn group flex flex-col items-center justify-center p-4 bg-arcade-panel border-4 border-arcade-yellow rounded-2xl w-36 h-36 md:w-44 md:h-44 text-center hover:scale-105 transition-transform">
+      <div class="text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">➕</div>
+      <span class="font-bold text-sm md:text-base text-arcade-yellow leading-tight">Calcul XXL</span>
+      <span class="text-[10px] text-gray-300 mt-1 bg-arcade-dark px-2 py-0.5 rounded-full">Gros boutons</span>
+    </button>
+
+    <!-- DESKTOP ICON 2: Boulier Retro -->
+    <button onclick="openWindow('win-boulier')" class="retro-btn group flex flex-col items-center justify-center p-4 bg-arcade-panel border-4 border-arcade-cyan rounded-2xl w-36 h-36 md:w-44 md:h-44 text-center hover:scale-105 transition-transform">
+      <div class="text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">🧮</div>
+      <span class="font-bold text-sm md:text-base text-arcade-cyan leading-tight">Boulier Rétro</span>
+      <span class="text-[10px] text-gray-300 mt-1 bg-arcade-dark px-2 py-0.5 rounded-full">Comptage tactile</span>
+    </button>
+
+    <!-- DESKTOP ICON 3: Séquence Mémoire -->
+    <button onclick="openWindow('win-memoire')" class="retro-btn group flex flex-col items-center justify-center p-4 bg-arcade-panel border-4 border-arcade-pink rounded-2xl w-36 h-36 md:w-44 md:h-44 text-center hover:scale-105 transition-transform">
+      <div class="text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">🎮</div>
+      <span class="font-bold text-sm md:text-base text-arcade-pink leading-tight">Séquence Arcade</span>
+      <span class="text-[10px] text-gray-300 mt-1 bg-arcade-dark px-2 py-0.5 rounded-full">Mémoire visuelle</span>
+    </button>
+
+    <!-- DESKTOP ICON 4: Chasse aux lettres (Jeu d'orthographe) -->
+    <button onclick="openWindow('win-ortho1')" class="retro-btn group flex flex-col items-center justify-center p-4 bg-arcade-panel border-4 border-arcade-green rounded-2xl w-36 h-36 md:w-44 md:h-44 text-center hover:scale-105 transition-transform">
+      <div class="text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">🔤</div>
+      <span class="font-bold text-sm md:text-base text-arcade-green leading-tight">Chasse Mots</span>
+      <span class="text-[10px] text-gray-300 mt-1 bg-arcade-dark px-2 py-0.5 rounded-full">Orthographe tactile</span>
+    </button>
+
+    <!-- DESKTOP ICON 5: Vrai ou Faux Ortho (Jeu d'orthographe) -->
+    <button onclick="openWindow('win-ortho2')" class="retro-btn group flex flex-col items-center justify-center p-4 bg-arcade-panel border-4 border-arcade-yellow rounded-2xl w-36 h-36 md:w-44 md:h-44 text-center hover:scale-105 transition-transform">
+      <div class="text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">📝</div>
+      <span class="font-bold text-sm md:text-base text-arcade-yellow leading-tight">Vrai ou Faux</span>
+      <span class="text-[10px] text-gray-300 mt-1 bg-arcade-dark px-2 py-0.5 rounded-full">Choix orthographique</span>
+    </button>
+
+    <!-- DESKTOP ICON 6: Espace Pro (Teaser) -->
+    <button onclick="openWindow('win-pro')" class="retro-btn group flex flex-col items-center justify-center p-4 bg-arcade-panel border-4 border-arcade-purple opacity-90 rounded-2xl w-36 h-36 md:w-44 md:h-44 text-center hover:scale-105 transition-transform relative">
+      <span class="absolute -top-2 -right-2 bg-arcade-pink text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white shadow">TEASER</span>
+      <div class="text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">🩺</div>
+      <span class="font-bold text-sm md:text-base text-arcade-purple leading-tight">Espace Pro</span>
+      <span class="text-[10px] text-gray-300 mt-1 bg-arcade-dark px-2 py-0.5 rounded-full">Ergothérapeutes</span>
+    </button>
+
+    <!-- DESKTOP ICON 7: Manifeste, Histoire & Copyright -->
+    <button onclick="openWindow('win-about')" class="retro-btn group flex flex-col items-center justify-center p-4 bg-arcade-panel border-4 border-arcade-green rounded-2xl w-36 h-36 md:w-44 md:h-44 text-center hover:scale-105 transition-transform">
+      <div class="text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">💡</div>
+      <span class="font-bold text-sm md:text-base text-arcade-green leading-tight">Mon Histoire</span>
+      <span class="text-[10px] text-gray-300 mt-1 bg-arcade-dark px-2 py-0.5 rounded-full">Droits & Concept</span>
+    </button>
+
+    <!-- CALCUL XXL WINDOW -->
+    <div id="win-calcul" class="window-instance hidden absolute top-12 left-12 w-[340px] sm:w-[500px] md:w-[680px] bg-arcade-panel border-4 border-arcade-yellow rounded-2xl retro-window flex flex-col z-20">
+      <div class="window-header bg-arcade-yellow text-black font-bold px-4 py-2 rounded-t-lg flex items-center justify-between">
+        <span class="font-retro text-xl sm:text-2xl tracking-wide select-none">➕ CALCUL XXL - Additions & Soustractions</span>
+        <button onclick="closeWindow('win-calcul')" class="close-btn bg-black text-white hover:bg-red-600 rounded-lg w-8 h-8 font-bold flex items-center justify-center border border-white z-30">✕</button>
+      </div>
+      <div class="p-6 flex-1 flex flex-col items-center justify-between space-y-6">
+        <div class="bg-arcade-dark w-full p-6 rounded-2xl border-2 border-arcade-border text-center shadow-inner">
+          <div class="text-xs uppercase tracking-widest text-arcade-cyan font-bold mb-2">Exercice Facile & Direct</div>
+          <div id="calcEquation" class="font-retro text-6xl md:text-7xl text-arcade-yellow tracking-wider">
+            4 + 3 = ?
+          </div>
+        </div>
+
+        <div id="calcFeedback" class="h-10 text-xl font-bold text-center flex items-center justify-center">
+          <span class="text-gray-400">Clique sur la bonne réponse !</span>
+        </div>
+
+        <div id="calcChoices" class="grid grid-cols-3 gap-4 w-full">
+          <!-- Dynamically populated -->
+        </div>
+
+        <button onclick="generateCalcul()" class="retro-btn w-full py-3 bg-arcade-purple border-2 border-white rounded-xl font-bold text-lg hover:bg-opacity-90">
+          🔄 Autre Calcul
+        </button>
+      </div>
+    </div>
+
+    <!-- BOULIER RETRO WINDOW -->
+    <div id="win-boulier" class="window-instance hidden absolute top-16 left-16 w-[340px] sm:w-[500px] md:w-[720px] bg-arcade-panel border-4 border-arcade-cyan rounded-2xl retro-window flex flex-col z-20">
+      <div class="window-header bg-arcade-cyan text-black font-bold px-4 py-2 rounded-t-lg flex items-center justify-between">
+        <span class="font-retro text-xl sm:text-2xl tracking-wide select-none">🧮 BOULIER RÉTRO TACTILE</span>
+        <button onclick="closeWindow('win-boulier')" class="close-btn bg-black text-white hover:bg-red-600 rounded-lg w-8 h-8 font-bold flex items-center justify-center border border-white z-30">✕</button>
+      </div>
+      <div class="p-6 flex-1 flex flex-col space-y-6">
+        <div class="bg-arcade-dark p-4 rounded-xl border border-arcade-border text-center">
+          <p class="text-sm md:text-base text-gray-200">Touche ou clique sur les gros blocs colorés pour compter facilement !</p>
+          <div class="mt-2 text-3xl font-retro text-arcade-cyan">Total activé : <span id="beadCount" class="text-arcade-yellow font-bold text-4xl">0</span></div>
+        </div>
+
+        <div class="space-y-4 bg-arcade-dark p-6 rounded-2xl border-2 border-arcade-border">
+          <!-- Row 1 -->
+          <div class="flex items-center space-x-3">
+            <span class="font-retro text-2xl text-arcade-pink w-12">L1</span>
+            <div class="flex-1 bg-arcade-panel p-2 rounded-xl border border-arcade-border flex justify-between gap-2">
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-pink border-2 border-white rounded-lg text-2xl font-bold">1</button>
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-pink border-2 border-white rounded-lg text-2xl font-bold">1</button>
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-pink border-2 border-white rounded-lg text-2xl font-bold">1</button>
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-pink border-2 border-white rounded-lg text-2xl font-bold">1</button>
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-pink border-2 border-white rounded-lg text-2xl font-bold">1</button>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="flex items-center space-x-3">
+            <span class="font-retro text-2xl text-arcade-yellow w-12">L2</span>
+            <div class="flex-1 bg-arcade-panel p-2 rounded-xl border border-arcade-border flex justify-between gap-2">
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-yellow text-black border-2 border-white rounded-lg text-2xl font-bold">1</button>
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-yellow text-black border-2 border-white rounded-lg text-2xl font-bold">1</button>
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-yellow text-black border-2 border-white rounded-lg text-2xl font-bold">1</button>
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-yellow text-black border-2 border-white rounded-lg text-2xl font-bold">1</button>
+              <button onclick="toggleBead(this)" class="bead-btn retro-btn flex-1 h-14 bg-arcade-yellow text-black border-2 border-white rounded-lg text-2xl font-bold">1</button>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="resetBoulier()" class="retro-btn w-full py-3 bg-arcade-purple border-2 border-white rounded-xl font-bold text-lg hover:bg-opacity-90">
+          🧹 Remettre à zéro
+        </button>
+      </div>
+    </div>
+
+    <!-- MEMOIRE ARCADE WINDOW -->
+    <div id="win-memoire" class="window-instance hidden absolute top-20 left-20 w-[340px] sm:w-[500px] md:w-[650px] bg-arcade-panel border-4 border-arcade-pink rounded-2xl retro-window flex flex-col z-20">
+      <div class="window-header bg-arcade-pink text-white font-bold px-4 py-2 rounded-t-lg flex items-center justify-between">
+        <span class="font-retro text-xl sm:text-2xl tracking-wide select-none">🎮 SÉQUENCE ARCADE MEMO</span>
+        <button onclick="closeWindow('win-memoire')" class="close-btn bg-black text-white hover:bg-red-600 rounded-lg w-8 h-8 font-bold flex items-center justify-center border border-white z-30">✕</button>
+      </div>
+      <div class="p-6 flex-1 flex flex-col items-center space-y-6">
+        <div class="bg-arcade-dark w-full p-4 rounded-xl border border-arcade-border text-center">
+          <div id="simonStatus" class="text-xl font-bold text-arcade-yellow">Clique sur "DÉMARRER" pour jouer !</div>
+          <div class="text-sm text-gray-300 mt-1">Score actuel : <span id="simonScore" class="font-bold text-arcade-green">0</span></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 w-full max-w-md">
+          <button id="pad-0" onclick="handlePadClick(0)" class="simon-pad retro-btn h-32 md:h-36 bg-arcade-pink border-4 border-white rounded-2xl text-4xl flex items-center justify-center">🔴</button>
+          <button id="pad-1" onclick="handlePadClick(1)" class="simon-pad retro-btn h-32 md:h-36 bg-arcade-cyan border-4 border-white rounded-2xl text-4xl flex items-center justify-center">🟦</button>
+          <button id="pad-2" onclick="handlePadClick(2)" class="simon-pad retro-btn h-32 md:h-36 bg-arcade-yellow border-4 border-white rounded-2xl text-4xl flex items-center justify-center">⭐</button>
+          <button id="pad-3" onclick="handlePadClick(3)" class="simon-pad retro-btn h-32 md:h-36 bg-arcade-green border-4 border-white rounded-2xl text-4xl flex items-center justify-center">🟩</button>
+        </div>
+
+        <button onclick="startSimonGame()" class="retro-btn w-full py-3 bg-arcade-green text-black border-2 border-white rounded-xl font-bold text-xl hover:bg-opacity-90">
+          ▶️ DÉMARRER LA SÉQUENCE
+        </button>
+      </div>
+    </div>
+
+    <!-- JEU 1: CHASSE AUX LETTRES (ORTHOGRAPHE) -->
+    <div id="win-ortho1" class="window-instance hidden absolute top-14 left-14 w-[340px] sm:w-[500px] md:w-[700px] bg-arcade-panel border-4 border-arcade-green rounded-2xl retro-window flex flex-col z-20">
+      <div class="window-header bg-arcade-green text-black font-bold px-4 py-2 rounded-t-lg flex items-center justify-between">
+        <span class="font-retro text-xl sm:text-2xl tracking-wide select-none">🔤 CHASSE AUX LETTRES</span>
+        <button onclick="closeWindow('win-ortho1')" class="close-btn bg-black text-white hover:bg-red-600 rounded-lg w-8 h-8 font-bold flex items-center justify-center border border-white z-30">✕</button>
+      </div>
+      <div class="p-6 flex-1 flex flex-col items-center justify-between space-y-6">
+        <div class="bg-arcade-dark w-full p-5 rounded-2xl border-2 border-arcade-border text-center shadow-inner">
+          <div class="text-xs uppercase tracking-widest text-arcade-green font-bold mb-1">Indice visuel</div>
+          <div id="ortho1Hint" class="text-lg text-arcade-yellow font-bold mb-3">Animal de compagnie</div>
+          <div class="text-xs text-gray-400 uppercase tracking-widest mb-1">Mot à trouver :</div>
+          <div id="ortho1Target" class="font-retro text-5xl md:text-6xl text-arcade-cyan tracking-widest min-h-[60px] flex items-center justify-center">
+            _ _ _
+          </div>
+        </div>
+
+        <div id="ortho1Feedback" class="h-8 text-lg font-bold text-center flex items-center justify-center">
+          <span class="text-gray-400">Touche les lettres dans le bon ordre !</span>
+        </div>
+
+        <div class="w-full bg-arcade-dark p-4 rounded-2xl border border-arcade-border">
+          <div class="text-xs text-gray-400 mb-2 font-bold text-center">Gros boutons de lettres :</div>
+          <div id="ortho1Letters" class="flex flex-wrap justify-center gap-3">
+            <!-- Rempli dynamiquement -->
+          </div>
+        </div>
+
+        <div class="flex gap-3 w-full">
+          <button onclick="resetOrtho1Current()" class="retro-btn flex-1 py-3 bg-arcade-pink border-2 border-white rounded-xl font-bold text-base">
+            🔄 Effacer
+          </button>
+          <button onclick="loadNextOrtho1()" class="retro-btn flex-1 py-3 bg-arcade-purple border-2 border-white rounded-xl font-bold text-base">
+            ➡️ Suivant
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JEU 2: VRAI OU FAUX ORTHOGRAPHIQUE -->
+    <div id="win-ortho2" class="window-instance hidden absolute top-18 left-18 w-[340px] sm:w-[500px] md:w-[680px] bg-arcade-panel border-4 border-arcade-yellow rounded-2xl retro-window flex flex-col z-20">
+      <div class="window-header bg-arcade-yellow text-black font-bold px-4 py-2 rounded-t-lg flex items-center justify-between">
+        <span class="font-retro text-xl sm:text-2xl tracking-wide select-none">📝 VRAI OU FAUX - Orthographe</span>
+        <button onclick="closeWindow('win-ortho2')" class="close-btn bg-black text-white hover:bg-red-600 rounded-lg w-8 h-8 font-bold flex items-center justify-center border border-white z-30">✕</button>
+      </div>
+      <div class="p-6 flex-1 flex flex-col items-center justify-between space-y-6">
+        <div class="bg-arcade-dark w-full p-6 rounded-2xl border-2 border-arcade-border text-center shadow-inner">
+          <div class="text-xs uppercase tracking-widest text-arcade-yellow font-bold mb-2">Est-ce que ce mot s'écrit correctement ?</div>
+          <div id="ortho2WordDisplay" class="font-retro text-6xl md:text-7xl text-arcade-cyan tracking-wider my-2">
+            CHAPEAU
+          </div>
+        </div>
+
+        <div id="ortho2Feedback" class="h-10 text-xl font-bold text-center flex items-center justify-center">
+          <span class="text-gray-400">Choisis VRAI si c'est correct, ou FAUX !</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 w-full">
+          <button onclick="checkOrtho2(true)" class="retro-btn h-28 bg-arcade-green text-black font-retro text-4xl font-bold rounded-2xl border-4 border-white flex items-center justify-center hover:bg-opacity-90">
+            ✔️ VRAI
+          </button>
+          <button onclick="checkOrtho2(false)" class="retro-btn h-28 bg-arcade-pink text-white font-retro text-4xl font-bold rounded-2xl border-4 border-white flex items-center justify-center hover:bg-opacity-90">
+            ❌ FAUX
+          </button>
+        </div>
+
+        <button onclick="loadNextOrtho2()" class="retro-btn w-full py-3 bg-arcade-purple border-2 border-white rounded-xl font-bold text-lg hover:bg-opacity-90">
+          🔄 Mot suivant
+        </button>
+      </div>
+    </div>
+
+    <!-- ESPACE PRO WINDOW -->
+    <div id="win-pro" class="window-instance hidden absolute top-24 left-24 w-[340px] sm:w-[500px] md:w-[600px] bg-arcade-panel border-4 border-arcade-purple rounded-2xl retro-window flex flex-col z-20">
+      <div class="window-header bg-arcade-purple text-white font-bold px-4 py-2 rounded-t-lg flex items-center justify-between">
+        <span class="font-retro text-xl sm:text-2xl tracking-wide select-none">🩺 ESPACE SUIVI PRO & THERAPEUTES</span>
+        <button onclick="closeWindow('win-pro')" class="close-btn bg-black text-white hover:bg-red-600 rounded-lg w-8 h-8 font-bold flex items-center justify-center border border-white z-30">✕</button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="bg-arcade-dark p-4 rounded-xl border border-arcade-purple text-center">
+          <span class="bg-arcade-pink text-white font-bold text-xs px-3 py-1 rounded-full uppercase">Version Pro Futuriste</span>
+          <h3 class="text-2xl font-bold text-arcade-yellow mt-2">Suivi d'Ergothérapie Automatisé</h3>
+          <p class="text-sm text-gray-300 mt-2">
+            DISPRAX-i restera **toujours 100% gratuit pour les familles**. La version Pro proposera aux praticiens un tableau de bord analytique.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          <div class="p-3 bg-arcade-dark border border-arcade-border rounded-lg flex items-center space-x-3">
+            <span class="text-2xl">📊</span>
+            <span>Précision des clics & temps de réaction</span>
+          </div>
+          <div class="p-3 bg-arcade-dark border border-arcade-border rounded-lg flex items-center space-x-3">
+            <span class="text-2xl">📄</span>
+            <span>Export de bilans PDF en 1 clic</span>
+          </div>
+          <div class="p-3 bg-arcade-dark border border-arcade-border rounded-lg flex items-center space-x-3">
+            <span class="text-2xl">🎯</span>
+            <span>Exercices personnalisés sur-mesure</span>
+          </div>
+          <div class="p-3 bg-arcade-dark border border-arcade-border rounded-lg flex items-center space-x-3">
+            <span class="text-2xl">🔒</span>
+            <span>Données de santé sécurisées</span>
+          </div>
+        </div>
+
+        <div class="bg-arcade-dark p-4 rounded-xl border border-arcade-border">
+          <label class="block text-xs font-bold text-arcade-cyan mb-2">Une idée d'exercice ou de besoin pour la suite ?</label>
+          <div class="flex gap-2">
+            <input type="text" id="suggestionInput" placeholder="Ex: Exercice d'alignement de formes..." class="flex-1 bg-arcade-bg border border-arcade-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-arcade-cyan">
+            <button onclick="submitSuggestion()" class="retro-btn bg-arcade-green text-black px-4 py-2 rounded-lg font-bold text-sm">Envoyer</button>
+          </div>
+          <span id="suggestionSuccess" class="text-xs text-arcade-green hidden mt-1 block">Merci pour votre suggestion !</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- À PROPOS WINDOW -->
+    <div id="win-about" class="window-instance hidden absolute top-12 left-28 w-[340px] sm:w-[500px] md:w-[620px] bg-arcade-panel border-4 border-arcade-green rounded-2xl retro-window flex flex-col z-20">
+      <div class="window-header bg-arcade-green text-black font-bold px-4 py-2 rounded-t-lg flex items-center justify-between">
+        <span class="font-retro text-xl sm:text-2xl tracking-wide select-none">💡 À PROPOS DE DISPRAX-i</span>
+        <button onclick="closeWindow('win-about')" class="close-btn bg-black text-white hover:bg-red-600 rounded-lg w-8 h-8 font-bold flex items-center justify-center border border-white z-30">✕</button>
+      </div>
+      <div class="p-6 space-y-4 text-sm md:text-base leading-relaxed overflow-y-auto max-h-[70vh]">
+        <div class="flex items-center space-x-4 bg-arcade-dark p-4 rounded-xl border border-arcade-border">
+          <div class="text-5xl">👾</div>
+          <div>
+            <h4 class="font-bold text-arcade-yellow text-lg">Créé par MARTIN Nolane</h4>
+            <p class="text-xs text-gray-300">Conçu par un développeur dyspraxique — par vécu, pas par étude de marché.</p>
+          </div>
+        </div>
+
+        <p class="text-gray-200">
+          La dyspraxie rend la manipulation d'une souris classique, les petits boutons minuscules et les interfaces encombrées extrêmement fatigants.
+        </p>
+
+        <p class="text-gray-200">
+          <strong class="text-arcade-cyan">DISPRAX-i</strong> a été créé pour offrir un cocon numérique amusant, néo-rétro, avec de grands boutons XXL tactiles et zéro piège de précision.
+        </p>
+
+        <!-- Solid Explicit Copyright Box -->
+        <div class="bg-arcade-dark p-4 rounded-xl border-2 border-arcade-yellow space-y-2">
+          <div class="font-bold text-arcade-yellow uppercase text-xs flex items-center gap-2">
+            <span>🛡️ COPYRIGHT & PROPRIÉTÉ INTELLECTUELLE</span>
+          </div>
+          <p class="text-white font-bold text-sm">
+            © 2026 MARTIN Nolane. Tous droits réservés.
+          </p>
+          <p class="text-xs text-gray-300">
+            Projet DISPRAX-i distribué sous licence libre **GNU GPLv3**. L'auteur conserve l'intégralité de ses droits moraux et de propriété intellectuelle sur l'œuvre originalement créée.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-arcade-panel border-t-4 border-arcade-border px-4 py-2 flex items-center justify-between z-40 shrink-0">
+    <div id="activeTaskbar" class="flex items-center space-x-2 overflow-x-auto">
+      <span class="text-xs text-gray-400 font-retro text-lg mr-2">Fenêtres :</span>
+    </div>
+
+    <div class="text-xs font-bold text-arcade-yellow hidden sm:block">
+      © 2026 MARTIN Nolane. Tous droits réservés. Projet DISPRAX-i sous licence GNU GPLv3.
+    </div>
+  </footer>
+
+  <script>
+    // --- PROTECTION ANTIVOL & SÉCURITÉ LÉGÈRE ---
+    // Désactive le clic droit pour éviter l'inspection rapide du code source tout en préservant l'ergonomie
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // Protection contre l'injection XSS basique dans les champs textuels
+    function sanitizeInput(str) {
+      const temp = document.createElement('div');
+      temp.textContent = str;
+      return temp.innerHTML;
+    }
+
+    let audioEnabled = true;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      if (!audioEnabled) return;
+      initAudio();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'click') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(150, now + 0.05);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      } else if (type === 'correct') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.08);
+        osc.frequency.setValueAtTime(783.99, now + 0.16);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.setValueAtTime(180, now + 0.1);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } else if (type === 'beep') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('soundIcon').innerText = audioEnabled ? '🔊' : '🔇';
+      document.getElementById('soundText').innerText = audioEnabled ? 'SON: ON' : 'SON: OFF';
+      if (audioEnabled) playSound('click');
+    }
+
+    let zIndexCounter = 30;
+
+    function bringToFront(win) {
+      zIndexCounter++;
+      win.style.zIndex = zIndexCounter;
+    }
+
+    function openWindow(id) {
+      playSound('click');
+      const win = document.getElementById(id);
+      if (!win) return;
+
+      win.classList.remove('hidden');
+      bringToFront(win);
+      updateTaskbar();
+    }
+
+    function closeWindow(id) {
+      playSound('click');
+      const win = document.getElementById(id);
+      if (win) {
+        win.classList.add('hidden');
+      }
+      updateTaskbar();
+    }
+
+    function updateTaskbar() {
+      const taskbar = document.getElementById('activeTaskbar');
+      taskbar.innerHTML = '<span class="text-xs text-gray-400 font-retro text-lg mr-2">Fenêtres :</span>';
+
+      const windows = [
+        { id: 'win-calcul', name: 'Calcul', icon: '➕' },
+        { id: 'win-boulier', name: 'Boulier', icon: '🧮' },
+        { id: 'win-memoire', name: 'Mémoire', icon: '🎮' },
+        { id: 'win-ortho1', name: 'Chasse Mots', icon: '🔤' },
+        { id: 'win-ortho2', name: 'Vrai/Faux', icon: '📝' },
+        { id: 'win-pro', name: 'Espace Pro', icon: '🩺' },
+        { id: 'win-about', name: 'Histoire', icon: '💡' },
+      ];
+
+      windows.forEach(w => {
+        const el = document.getElementById(w.id);
+        if (el && !el.classList.contains('hidden')) {
+          const btn = document.createElement('button');
+          btn.className = 'retro-btn bg-arcade-dark border border-arcade-border px-3 py-1 rounded-lg text-xs flex items-center space-x-1 font-bold text-arcade-yellow';
+          btn.innerHTML = `<span>${w.icon}</span><span>${w.name}</span>`;
+          btn.onclick = () => { openWindow(w.id); bringToFront(el); };
+          taskbar.appendChild(btn);
+        }
+      });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('osClock').innerText = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // --- LOGIQUE DE DÉPLACEMENT SÉCURISÉE DES FENÊTRES ---
+    function initDraggableWindows() {
+      const windows = document.querySelectorAll('.window-instance');
+
+      windows.forEach(win => {
+        const header = win.querySelector('.window-header');
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+
+        function dragStart(e) {
+          if (e.target.closest('.close-btn')) return;
+
+          bringToFront(win);
+          isDragging = true;
+          
+          const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+          const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+          startX = clientX;
+          startY = clientY;
+
+          const rect = win.getBoundingClientRect();
+          initialX = rect.left;
+          initialY = rect.top;
+
+          win.style.left = initialX + 'px';
+          win.style.top = initialY + 'px';
+          win.style.inset = 'auto';
+        }
+
+        function drag(e) {
+          if (!isDragging) return;
+          e.preventDefault();
+
+          const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+          const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+          const dx = clientX - startX;
+          const dy = clientY - startY;
+
+          win.style.left = (initialX + dx) + 'px';
+          win.style.top = (initialY + dy) + 'px';
+        }
+
+        function dragEnd() {
+          isDragging = false;
+        }
+
+        header.addEventListener('mousedown', dragStart);
+        window.addEventListener('mousemove', drag);
+        window.addEventListener('mouseup', dragEnd);
+
+        header.addEventListener('touchstart', dragStart, { passive: false });
+        window.addEventListener('touchmove', drag, { passive: false });
+        window.addEventListener('touchend', dragEnd);
+      });
+    }
+
+    let currentAnswer = 0;
+
+    function generateCalcul() {
+      playSound('click');
+      const feedback = document.getElementById('calcFeedback');
+      feedback.innerHTML = '<span class="text-gray-400">Clique sur la bonne réponse !</span>';
+
+      const isAddition = Math.random() > 0.3;
+      let num1, num2;
+
+      if (isAddition) {
+        num1 = Math.floor(Math.random() * 8) + 1;
+        num2 = Math.floor(Math.random() * 8) + 1;
+        currentAnswer = num1 + num2;
+        document.getElementById('calcEquation').innerText = `${num1} + ${num2} = ?`;
+      } else {
+        num1 = Math.floor(Math.random() * 10) + 5;
+        num2 = Math.floor(Math.random() * 5) + 1;
+        currentAnswer = num1 - num2;
+        document.getElementById('calcEquation').innerText = `${num1} - ${num2} = ?`;
+      }
+
+      let choices = [currentAnswer];
+      while (choices.length < 3) {
+        let fake = currentAnswer + (Math.floor(Math.random() * 5) - 2);
+        if (fake >= 0 && !choices.includes(fake)) {
+          choices.push(fake);
+        }
+      }
+      choices.sort(() => Math.random() - 0.5);
+
+      const container = document.getElementById('calcChoices');
+      container.innerHTML = '';
+      choices.forEach(val => {
+        const btn = document.createElement('button');
+        btn.className = 'retro-btn h-24 md:h-28 bg-arcade-yellow text-black font-retro text-5xl md:text-6xl font-bold rounded-2xl border-4 border-white flex items-center justify-center hover:bg-opacity-90';
+        btn.innerText = val;
+        btn.onclick = () => checkCalcul(val, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkCalcul(val, element) {
+      const feedback = document.getElementById('calcFeedback');
+      if (val === currentAnswer) {
+        playSound('correct');
+        feedback.innerHTML = '<span class="text-arcade-green font-bold text-2xl">🎉 BRAVO ! C\'EST JUSTE !</span>';
+        element.classList.add('bg-arcade-green');
+        setTimeout(generateCalcul, 1500);
+      } else {
+        playSound('wrong');
+        feedback.innerHTML = '<span class="text-arcade-pink font-bold text-xl">❌ Oups ! Réessaie encore.</span>';
+      }
+    }
+
+    let activeBeads = 0;
+
+    function toggleBead(btn) {
+      if (btn.classList.contains('active-bead')) {
+        btn.classList.remove('active-bead', 'bg-arcade-green', 'text-black');
+        btn.style.transform = 'translateY(0)';
+        activeBeads--;
+        playSound('click');
+      } else {
+        btn.classList.add('active-bead', 'bg-arcade-green', 'text-black');
+        activeBeads++;
+        playSound('beep');
+      }
+      document.getElementById('beadCount').innerText = activeBeads;
+    }
+
+    function resetBoulier() {
+      playSound('click');
+      const beads = document.querySelectorAll('.bead-btn');
+      beads.forEach(b => {
+        b.classList.remove('active-bead', 'bg-arcade-green', 'text-black');
+      });
+      activeBeads = 0;
+      document.getElementById('beadCount').innerText = '0';
+    }
+
+    let simonSequence = [];
+    let playerSequence = [];
+    let simonScore = 0;
+    let isPlayingSequence = false;
+
+    function startSimonGame() {
+      playSound('click');
+      simonSequence = [];
+      playerSequence = [];
+      simonScore = 0;
+      document.getElementById('simonScore').innerText = '0';
+      nextSimonRound();
+    }
+
+    function nextSimonRound() {
+      playerSequence = [];
+      simonSequence.push(Math.floor(Math.random() * 4));
+      document.getElementById('simonStatus').innerText = '👀 Regarde bien la séquence...';
+      playSimonSequence();
+    }
+
+    function playSimonSequence() {
+      isPlayingSequence = true;
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i >= simonSequence.length) {
+          clearInterval(interval);
+          isPlayingSequence = false;
+          document.getElementById('simonStatus').innerText = '👉 À ton tour ! Touche les boutons.';
+          return;
+        }
+        flashPad(simonSequence[i]);
+        i++;
+      }, 700);
+    }
+
+    function flashPad(padIndex) {
+      playSound('beep');
+      const pad = document.getElementById(`pad-${padIndex}`);
+      if (pad) {
+        pad.classList.add('brightness-150', 'scale-105', 'pressed');
+        setTimeout(() => {
+          pad.classList.remove('brightness-150', 'scale-105', 'pressed');
+        }, 350);
+      }
+    }
+
+    function handlePadClick(padIndex) {
+      if (isPlayingSequence) return;
+      playSound('click');
+      flashPad(padIndex);
+      playerSequence.push(padIndex);
+
+      const currentIndex = playerSequence.length - 1;
+      if (playerSequence[currentIndex] !== simonSequence[currentIndex]) {
+        playSound('wrong');
+        document.getElementById('simonStatus').innerText = '❌ Perdu ! Clique sur "DÉMARRER" pour rejouer.';
+        return;
+      }
+
+      if (playerSequence.length === simonSequence.length) {
+        playSound('correct');
+        simonScore++;
+        document.getElementById('simonScore').innerText = simonScore;
+        document.getElementById('simonStatus').innerText = '🎉 Bravo ! Niveau suivant...';
+        setTimeout(nextSimonRound, 1200);
+      }
+    }
+
+    // --- LOGIQUE JEU 1 : CHASSE AUX LETTRES ---
+    const ortho1Words = [
+      { word: "CHAT", hint: "Animal ronronnant" },
+      { word: "TABLE", hint: "Meuble avec quatre pieds" },
+      { word: "ECOLE", hint: "Lieu où l'on apprend" },
+      { word: "LUNE", hint: "Astre brillant la nuit" },
+      { word: "ROUGE", hint: "Couleur de la fraise" }
+    ];
+    let ortho1Index = 0;
+    let ortho1UserProgress = [];
+
+    function initOrtho1() {
+      ortho1UserProgress = [];
+      const currentObj = ortho1Words[ortho1Index];
+      document.getElementById('ortho1Hint').innerText = currentObj.hint;
+      document.getElementById('ortho1Feedback').innerHTML = '<span class="text-gray-400">Touche les lettres dans le bon ordre !</span>';
+      
+      updateOrtho1Display();
+
+      let letters = currentObj.word.split('');
+      letters.sort(() => Math.random() - 0.5);
+
+      const container = document.getElementById('ortho1Letters');
+      container.innerHTML = '';
+      letters.forEach((char) => {
+        const btn = document.createElement('button');
+        btn.className = 'retro-btn w-16 h-16 bg-arcade-yellow text-black font-retro text-4xl font-bold rounded-xl border-2 border-white flex items-center justify-center hover:bg-opacity-90';
+        btn.innerText = char;
+        btn.onclick = () => selectOrtho1Letter(char, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function updateOrtho1Display() {
+      const currentObj = ortho1Words[ortho1Index];
+      let displayStr = '';
+      for (let i = 0; i < currentObj.word.length; i++) {
+        if (i < ortho1UserProgress.length) {
+          displayStr += ortho1UserProgress[i] + ' ';
+        } else {
+          displayStr += '_ ';
+        }
+      }
+      document.getElementById('ortho1Target').innerText = displayStr.trim();
+    }
+
+    function selectOrtho1Letter(char, btn) {
+      playSound('click');
+      const currentObj = ortho1Words[ortho1Index];
+      const expectedChar = currentObj.word[ortho1UserProgress.length];
+
+      if (char === expectedChar) {
+        ortho1UserProgress.push(char);
+        btn.style.opacity = '0.3';
+        btn.style.pointerEvents = 'none';
+        updateOrtho1Display();
+
+        if (ortho1UserProgress.length === currentObj.word.length) {
+          playSound('correct');
+          document.getElementById('ortho1Feedback').innerHTML = '<span class="text-arcade-green font-bold text-2xl">🎉 PARFAIT ! MOT TROUVÉ !</span>';
+        }
+      } else {
+        playSound('wrong');
+        document.getElementById('ortho1Feedback').innerHTML = '<span class="text-arcade-pink font-bold text-xl">❌ Ce n\'est pas la bonne lettre !</span>';
+      }
+    }
+
+    function resetOrtho1Current() {
+      playSound('click');
+      initOrtho1();
+    }
+
+    function loadNextOrtho1() {
+      playSound('click');
+      ortho1Index = (ortho1Index + 1) % ortho1Words.length;
+      initOrtho1();
+    }
+
+    // --- LOGIQUE JEU 2 : VRAI OU FAUX ORTHOGRAPHIQUE ---
+    const ortho2List = [
+      { text: "CHAPEAU", correct: true },
+      { text: "CHAPOT", correct: false },
+      { text: "MAISON", correct: true },
+      { text: "MEZON", correct: false },
+      { text: "VOITURE", correct: true },
+      { text: "VOUATUR", correct: false },
+      { text: "GARÇON", correct: true },
+      { text: "GARSON", correct: false }
+    ];
+    let ortho2CurrentIndex = 0;
+
+    function initOrtho2() {
+      const item = ortho2List[ortho2CurrentIndex];
+      document.getElementById('ortho2WordDisplay').innerText = item.text;
+      document.getElementById('ortho2Feedback').innerHTML = '<span class="text-gray-400">Choisis VRAI si c\'est correct, ou FAUX !</span>';
+    }
+
+    function checkOrtho2(userChoice) {
+      const item = ortho2List[ortho2CurrentIndex];
+      const feedback = document.getElementById('ortho2Feedback');
+
+      if (userChoice === item.correct) {
+        playSound('correct');
+        feedback.innerHTML = `<span class="text-arcade-green font-bold text-2xl">🎉 BRAVO ! C'est bien ${item.correct ? 'VRAI' : 'FAUX'} !</span>`;
+        setTimeout(loadNextOrtho2, 1600);
+      } else {
+        playSound('wrong');
+        feedback.innerHTML = '<span class="text-arcade-pink font-bold text-xl">❌ Oups ! Ce n\'est pas la bonne réponse.</span>';
+      }
+    }
+
+    function loadNextOrtho2() {
+      playSound('click');
+      ortho2CurrentIndex = (ortho2CurrentIndex + 1) % ortho2List.length;
+      initOrtho2();
+    }
+
+    function submitSuggestion() {
+      const input = document.getElementById('suggestionInput');
+      const rawValue = input.value.trim();
+      if (rawValue !== '') {
+        // Sécurisation anti-XSS de la suggestion
+        const safeValue = sanitizeInput(rawValue);
+        playSound('correct');
+        document.getElementById('suggestionSuccess').classList.remove('hidden');
+        input.value = '';
+        setTimeout(() => {
+          document.getElementById('suggestionSuccess').classList.add('hidden');
+        }, 3000);
+      }
+    }
+
+    window.onload = function() {
+      generateCalcul();
+      initOrtho1();
+      initOrtho2();
+      initDraggableWindows();
+      openWindow('win-calcul');
+    };
+  </script>
+</body>
+</html>
